@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import java.util.Date;
 
 @Data
@@ -30,7 +30,6 @@ public class RegisterRequest {
     private String password;
 
     @NotNull(message="date of birth should not be empty")
-    @NotBlank(message="date of birth should not be empty")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     @Past
     private Date birthday;

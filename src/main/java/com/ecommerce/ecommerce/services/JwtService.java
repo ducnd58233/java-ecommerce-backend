@@ -5,6 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Service
+@Service("jwtService")
 public class JwtService {
+    private static final Logger log = LogManager.getLogger(JwtService.class);
+
     private static final String SECRET_KEY = "6251655468576D597133743677397A24432646294A404E635266556A586E3272";
 
     public String extractUsername(String token) {
@@ -39,6 +43,7 @@ public class JwtService {
                 .builder()
                 .setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
+                .setIssuer(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -47,11 +52,20 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        if (username.equals(userDetails.getUsername()) && !isTokenExpired(token)) {
+
+            return true;
+        }
+        log.error("Invalid JWT token");
+        return false;
     }
 
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        if (extractExpiration(token).before(new Date())) {
+            log.error("Expired JWT token");
+            return true;
+        }
+        return false;
     }
 
     private Date extractExpiration(String token) {

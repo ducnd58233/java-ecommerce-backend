@@ -1,5 +1,8 @@
 package com.ecommerce.ecommerce.models;
 
+import com.ecommerce.ecommerce.common.DateAudit;
+import com.ecommerce.ecommerce.common.Role;
+import com.ecommerce.ecommerce.common.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-import javax.validation.constraints.Email;
 
 @Data
 @Builder
@@ -21,10 +23,11 @@ import javax.validation.constraints.Email;
 @Table(name="auths")
 public class Auth extends DateAudit implements UserDetails {
     @Id @Column(length = 100, nullable=false)
-    @Email
     private String email;
-
+    @Column(nullable=false)
     private String password;
+
+    private int status = Status.ACTIVE.getValue();
 
     @Enumerated(EnumType.STRING)
     private Role role;

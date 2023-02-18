@@ -1,4 +1,4 @@
-package com.ecommerce.ecommerce.common.advice;
+package com.ecommerce.ecommerce.securities.advice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

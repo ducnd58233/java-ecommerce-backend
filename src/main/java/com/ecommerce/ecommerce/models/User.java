@@ -1,9 +1,7 @@
 package com.ecommerce.ecommerce.models;
 
 import com.ecommerce.ecommerce.common.BaseEntity;
-import com.ecommerce.ecommerce.common.DateAudit;
 import com.ecommerce.ecommerce.common.Role;
-import com.ecommerce.ecommerce.common.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,7 +21,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="users")
+@Table(name="users", indexes = {
+        @Index(name = "email", columnList = "email"),
+        @Index(name = "role", columnList = "role"),
+        @Index(name = "status", columnList = "status")
+})
 public class User extends BaseEntity implements UserDetails {
     @Column(length = 100, nullable=false, unique=true)
     private String email;
@@ -35,7 +37,7 @@ public class User extends BaseEntity implements UserDetails {
     private String lastname;
     @Column(nullable=false)
     private String phone;
-    @Column(nullable=false)
+    @Column(nullable=true)
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date birthday;
     @Enumerated(EnumType.STRING)

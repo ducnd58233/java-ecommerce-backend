@@ -1,7 +1,7 @@
 package com.ecommerce.ecommerce.services;
 
-import com.ecommerce.ecommerce.common.Status;
-import com.ecommerce.ecommerce.common.exception.ApiRequestException;
+import com.ecommerce.ecommerce.common.CustomStatus;
+import com.ecommerce.ecommerce.securities.exception.ApiRequestException;
 import com.ecommerce.ecommerce.controllers.request.AuthenticationRequest;
 import com.ecommerce.ecommerce.controllers.request.RegisterRequest;
 import com.ecommerce.ecommerce.controllers.response.AuthenticationResponse;
@@ -11,12 +11,11 @@ import com.ecommerce.ecommerce.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service("authenticationService")
 @RequiredArgsConstructor
@@ -31,7 +30,7 @@ public class AuthenticationService {
         log.debug("Entering register service");
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             log.error("Email already exists");
-            throw new ApiRequestException("email already exists");
+            throw new ApiRequestException("email already exists", HttpStatus.CONFLICT);
         }
 
         User user = User.builder()
@@ -55,6 +54,19 @@ public class AuthenticationService {
 
     public AuthenticationResponse login(AuthenticationRequest request) {
         log.debug("Entering login service");
+
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+
+        if (user == null || (user != null && user.getStatus() == CustomStatus.INACTIVE.getValue())) {
+            log.error("User not found");
+            throw new ApiRequestException("email or password is incorrect", HttpStatus.NOT_FOUND);
+        }
+
+        if (user != null && user.getStatus() == CustomStatus.BANNED.getValue()) {
+            log.error("User has been banned");
+            throw new ApiRequestException("user has been banned", HttpStatus.FORBIDDEN);
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -62,19 +74,7 @@ public class AuthenticationService {
                 )
         );
 
-        Optional<User> user = userRepository.findByEmail(request.getEmail());
-
-        if (!user.isPresent() || (user.isPresent() && user.get().getStatus() == Status.INACTIVE.getValue())) {
-            log.error("User not found");
-            throw new ApiRequestException("user not found");
-        }
-
-        if (user.isPresent() && user.get().getStatus() == Status.BANNED.getValue()) {
-            log.error("User has been banned");
-            throw new ApiRequestException("user has been banned");
-        }
-
-        String jwtToken = jwtService.generateToken(user.get());
+        String jwtToken = jwtService.generateToken(user);
         AuthenticationResponse response = AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();

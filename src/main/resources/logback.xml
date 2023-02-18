@@ -29,6 +29,17 @@
         </rollingPolicy>
     </appender>
 
+    <logger name="com.ecommerce" level="DEBUG" />
+
+    <!-- to view SQL statements, change to DEBUG -->
+    <logger name="org.hibernate.SQL" level="WARN" />
+
+    <logger name="org.springframework" level="WARN" />
+    <logger name="org.springframework.transaction" level="WARN" />
+
+    <!-- in order to debug some marshalling issues, this needs to be TRACE -->
+    <logger name="org.springframework.web.servlet.mvc" level="WARN" />
+
     <!-- LOG everything at INFO level -->
     <root level="info">
         <appender-ref ref="RollingFile" />

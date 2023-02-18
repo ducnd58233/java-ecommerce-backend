@@ -1,4 +1,4 @@
-package com.ecommerce.ecommerce.common.exception;
+package com.ecommerce.ecommerce.securities.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +12,13 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = {ApiRequestException.class})
     public ResponseEntity<Object> handleApiRequestException(ApiRequestException e) {
         // 1. Create payload containing exception details
-        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        HttpStatus status = e.getHttpStatus();
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                badRequest,
+                status,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
         // 2. Return response entity
-        return new ResponseEntity<>(apiException, badRequest);
+        return new ResponseEntity<>(apiException, status);
     }
 }

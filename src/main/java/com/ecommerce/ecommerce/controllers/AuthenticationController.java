@@ -8,12 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -25,18 +21,20 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
+    @ResponseStatus(HttpStatus.CREATED)
+    public AuthenticationResponse register(
             @Valid @RequestBody RegisterRequest request
     ) {
         log.debug("Entering register endpoint");
-        return ResponseEntity.ok(service.register(request));
+        return service.register(request);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public AuthenticationResponse login(
             @Valid @RequestBody AuthenticationRequest request
     ) {
         log.debug("Entering login endpoint");
-        return ResponseEntity.ok(service.login(request));
+        return service.login(request);
     }
 }

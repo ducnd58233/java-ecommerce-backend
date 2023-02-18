@@ -1,8 +1,9 @@
-package com.ecommerce.ecommerce.repositories;
+package com.ecommerce.ecommerce.test.repositories;
 
 import com.ecommerce.ecommerce.common.Role;
-import com.ecommerce.ecommerce.common.Status;
+import com.ecommerce.ecommerce.common.CustomStatus;
 import com.ecommerce.ecommerce.models.User;
+import com.ecommerce.ecommerce.repositories.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,7 @@ class UserRepositoryTest {
                 .phone(phoneUserInactive)
                 .role(Role.USER)
                 .build();
-        userInactive.setStatus(Status.INACTIVE.getValue());
+        userInactive.setStatus(CustomStatus.INACTIVE.getValue());
         userRepository.save(userInactive);
     }
 
@@ -74,21 +75,21 @@ class UserRepositoryTest {
     }
 
     @Test
-    void itShouldCheckIfEmailExistsAndStillActive() {
+    void giveExistUserEmail_whenUserStillActive_shouldFoundTheUser() {
         // give
         String email = "duc1@gmail.com";
         // when
-        User actual = userRepository.findByEmailAndStatus(email, Status.ACTIVE.getValue()).orElse(null);
+        User actual = userRepository.findByEmailAndStatus(email, CustomStatus.ACTIVE.getValue()).orElse(null);
         // then
         assertEquals(userActive, actual);
     }
 
     @Test
-    void itShouldCheckIfEmailExistsButInactive() {
+    void giveExistUserEmail_whenUserIsInactive_shouldNotFoundTheUser() {
         // give
         String email = "duc2@gmail.com";
         // when
-        User actual = userRepository.findByEmailAndStatus(email, Status.INACTIVE.getValue()).orElse(null);
+        User actual = userRepository.findByEmailAndStatus(email, CustomStatus.INACTIVE.getValue()).orElse(null);
         // then
         assertEquals(userInactive, actual);
     }

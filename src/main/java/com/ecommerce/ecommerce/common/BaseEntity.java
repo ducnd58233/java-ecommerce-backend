@@ -16,5 +16,5 @@ public class BaseEntity extends DateAudit {
     @GeneratedValue
     private Long id;
 
-    private int status = Status.ACTIVE.getValue();
+    private int status = CustomStatus.ACTIVE.getValue();
 }

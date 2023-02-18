@@ -1,6 +1,6 @@
 package com.ecommerce.ecommerce.config;
 
-import com.ecommerce.ecommerce.common.Status;
+import com.ecommerce.ecommerce.common.CustomStatus;
 import com.ecommerce.ecommerce.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +25,7 @@ public class ApplicationConfig {
     @Bean
     public UserDetailsService userDetailsServiceService() {
         // lambda expression
-        return username -> userRepository.findByEmailAndStatus(username, Status.ACTIVE.getValue())
+        return username -> userRepository.findByEmailAndStatus(username, CustomStatus.ACTIVE.getValue())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 

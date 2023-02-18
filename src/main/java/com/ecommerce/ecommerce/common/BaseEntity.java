@@ -1,4 +1,4 @@
-package com.ecommerce.ecommerce.models;
+package com.ecommerce.ecommerce.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.GeneratedValue;
@@ -6,8 +6,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import static jakarta.transaction.Status.STATUS_ACTIVE;
 
 @Data
 @NoArgsConstructor
@@ -18,5 +16,5 @@ public class BaseEntity extends DateAudit {
     @GeneratedValue
     private Long id;
 
-    private int status = STATUS_ACTIVE;
+    private int status = CustomStatus.ACTIVE.getValue();
 }

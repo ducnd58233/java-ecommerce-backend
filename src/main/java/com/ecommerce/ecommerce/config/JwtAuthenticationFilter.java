@@ -1,6 +1,6 @@
 package com.ecommerce.ecommerce.config;
 
-import com.ecommerce.ecommerce.models.Auth;
+import com.ecommerce.ecommerce.models.User;
 import com.ecommerce.ecommerce.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -43,12 +43,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         userEmail = jwtService.extractUsername(jwt);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Auth auth = (Auth) this.userDetailsService.loadUserByUsername(userEmail);
-            if (jwtService.isTokenValid(jwt, auth)) {
+            User user = (User) this.userDetailsService.loadUserByUsername(userEmail);
+            if (jwtService.isTokenValid(jwt, user)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        auth,
+                        user,
                         null,
-                        auth.getAuthorities()
+                        user.getAuthorities()
                 );
                 authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)

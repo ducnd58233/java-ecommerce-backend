@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce.config;
 
-import com.ecommerce.ecommerce.repositories.AuthRepository;
+import com.ecommerce.ecommerce.common.CustomStatus;
+import com.ecommerce.ecommerce.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,12 +20,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 @EnableJpaAuditing
 public class ApplicationConfig {
-    private final AuthRepository authRepository;
+    private final UserRepository userRepository;
 
     @Bean
     public UserDetailsService userDetailsServiceService() {
         // lambda expression
-        return username -> authRepository.findByEmail(username)
+        return username -> userRepository.findByEmailAndStatus(username, CustomStatus.ACTIVE.getValue())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
